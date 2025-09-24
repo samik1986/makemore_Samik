@@ -4,8 +4,8 @@ from torch.nn import functional as F
 
 block_size = 8
 batch_size = 32
-max_iters = 3000
-eval_interval = 300
+max_iters = 300000
+eval_interval = 1000
 learning_rate = 1e-2
 eval_iters = 200
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -161,6 +161,8 @@ for iter in range(max_iters): # increase number of steps for good results...
     if iter % eval_interval == 0 or iter == max_iters - 1:
         losses = estimate_loss()
         print(f"step {iter}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
+        context = torch.zeros((1, 1), dtype=torch.long, device=device)
+        print(decode(m.generate(context, max_new_tokens=500)[0].tolist()))
 
     # sample a batch of data
     xb, yb = get_batch('train')
